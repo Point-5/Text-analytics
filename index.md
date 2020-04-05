@@ -60,12 +60,76 @@ f.close()
 
 ```
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+After data downloading, we started our analysis. At the beginning we tried to use textblob to score the tweet content and obtain sentiment value.And textblob. Polarity has a value [-1,0] represent negative sentiment and [0,1] represent positive sentiment.
+Then we cleaned the data, we removed URL,non-English language, mentions and all the other things we thought useless in the sentences.
 
-### Jekyll Themes
+```markdown
+Syntax highlighted code block
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Chelsea7227/Sentiment-Analysis/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+import re
+import pandas as pd 
+import numpy as np 
+import matplotlib.pyplot as plt 
+import seaborn as sns
+import string
+import nltk
+import warnings 
+from textblob import TextBlob
+warnings.filterwarnings("ignore", category=DeprecationWarning)
 
-### Support or Contact
+train  = pd.read_csv('sorted.csv')
+# remove url
+def remove_urls(vTEXT):
+    vTEXT = re.sub(r'(https|http)?:\/\/(\w|\.|\/|\?|\=|\&|\%)*\b', '', vTEXT, flags=re.MULTILINE)
+    return(vTEXT)
 
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+train.content = train.content.apply(remove_urls)
+# remove non-en language
+train = train[~train['content'].str.contains(r'[^\x00-\x7F]+')]
+train.head()
+# remove pattern
+def remove_pattern(input_txt, pattern):
+    r = re.findall(pattern, input_txt)
+    for i in r:
+        input_txt = re.sub(i, '', input_txt)
+    return input_txt    
+# remove twitter handles (@user)
+train['tidy_tweet'] = np.vectorize(remove_pattern)(train['content'], "@[\w]*")
+# remove special characters, numbers, punctuations
+train['tidy_tweet'] = train['tidy_tweet'].str.replace("[^a-zA-Z#]", " ")
+# romove short words
+train['tidy_tweet'] = train['tidy_tweet'].apply(lambda x: ' '.join([w for w in x.split() if len(w)>3]))
+# take a look
+train.head()
+
+
+```
+Then we scored all the text that we obtained from twitter.
+
+```markdown
+Syntax highlighted code block
+# score it
+text = train.tidy_tweet.iloc[0]
+s = TextBlob(text)
+print(s)
+def get_polarity(text):
+    s = TextBlob(text)
+    return s.sentiment.polarity
+print(s.sentiment)
+def get_subjectivity(text):
+    s = TextBlob(text)
+    return s.sentiment.subjectivity
+# get the polarity and subjectivity of tweets
+train["polarity"] = train.tidy_tweet.apply(get_polarity)
+train["subjectivity"] = train.tidy_tweet.apply(get_subjectivity)
+train.head()
+# get daily sentiment
+def get_date(text):
+    s = text[0:10]
+    return s
+df=train.groupby("date").mean().rename(columns={"polarity":"polarity_mean","subjectivity":"subjectivity_mean"})
+df
+
+**Bold** and _Italic_ and `Code` text
+
+```
