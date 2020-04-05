@@ -7,7 +7,6 @@ We downloaded tweet from twitter ,with text_query #coronavirus,stock”
 (when we downloaded data using this code, we met problems like missing data of some days. We cannot figure out what is going wrong so we change to download the data day by day, but that code is too long and repetitive, so we still present the initial code)
 
 ```markdown
-Syntax highlighted code block
 
 import GetOldTweets3 as got
 import csv
@@ -56,7 +55,6 @@ with open("sorted_new.csv", "w", newline = '') as f:
             fileWriter.writerow(row)
 f.close()
 
-**Bold** and _Italic_ and `Code` text
 
 ```
 
