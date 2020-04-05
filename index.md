@@ -137,7 +137,7 @@ df
 However, we found that all the average polarity were positive. We thought it may be caused by the inaccuracy of textblob. And we cannot use this data of sentiment to predict the volatility index.
 Thus, we tried to build a sentiment analysis model to help us classify the emotions in tweet better. And we use the dataset sentiment140 to train our model and have an accuracy closed to 80%.
 
-## Blog 2
+## Blog 3
 After trying the linear regression model and logit model, we decided to try another model called random forest model. why we choose it? To answer this question, we will suggest some of its advantages which will clear your mind. The first advantage is that it can both handle binary features and numerical features. Secondly, it is great with high dimensionality. Thirdly, it is robust to non-linear data.
 
 Our initial idea is to compare the importance of sentiment to other parameters, so we think the cross_val_score function will be very suitable for us to achieve our goal. So we set up three tests, the first one is to do the cross validation for each feature. Then we calculate the overall score with all features and drop the key parameter—sentiment to get a new one. In this way, we can compare the importance of different features. 
